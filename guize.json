@@ -1,0 +1,56 @@
+[
+  {
+    "outboundTag": "block",
+    "domain": [
+      "domain:advertpay.vip.xunlei.com",
+      "domain:adspay.vip.xunlei.com",
+      "domain:etl.xlmc.sandai.net",
+      "domain:log.download.xunlei.com",
+      "domain:stat.download.xunlei.com",
+      "domain:analysis-acc-ssl.xunlei.com",
+      "domain:hub5pn.sandai.net",
+      "domain:active.shouji.xunlei.com",
+      "domain:p2p.xlmc.sandai.net",
+      "domain:update.xunlei.com",
+      "domain:res-etl-ssl.xunlei.com",
+      "domain:etl-xldc-ssl.xunlei.com",
+      "domain:et-conf-xldc-ssl.xunlei.com"
+    ],
+    "enabled": true,
+    "remarks": "\u5B9A\u5236-block"
+  },
+  {
+    "outboundTag": "proxy",
+    "domain": [
+      "domain:googleapis.com",
+      "domain:gstatic.com",
+      "domain:googleusercontent.com",
+      "domain:translate.google.com",
+      "domain:translate.googleapis.com",
+      "domain:ggpht.com",
+      "domain:www.gstatic.com",
+      "domain:fonts.gstatic.com",
+      "domain:fonts.googleapis.com",
+      "domain:ajax.googleapis.com",
+      "domain:googleusercontent.com",
+      "domain:copilot.microsoft.com"
+    ],
+    "enabled": true,
+    "remarks": "\u5B9A\u5236-proxy"
+  },
+  {
+    "outboundTag": "direct",
+    "domain": [
+      "domain:nvidia.com",
+      "domain:catvod.com",
+      "domain:546287.xyz",
+      "domain:speedtest.net",
+      "domain:ooklaserver.net",
+      "domain:nexus-cdn.com",
+      "domain:foobar2000.org",
+      "domain:gofile.io"
+    ],
+    "enabled": true,
+    "remarks": "\u5B9A\u5236-direct"
+  }
+]
