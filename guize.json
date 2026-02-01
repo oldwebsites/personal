@@ -42,6 +42,9 @@
     "outboundTag": "direct",
     "domain": [
       "domain:nvidia.com",
+      "domain:betopfun.com"
+      "domain:babylonjs.com"
+      "domain:betopgame.com"
       "domain:catvod.com",
       "domain:546287.xyz",
       "domain:speedtest.net",
@@ -53,4 +56,5 @@
     "enabled": true,
     "remarks": "\u5B9A\u5236-direct"
   }
+
 ]
