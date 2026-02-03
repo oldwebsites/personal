@@ -43,6 +43,7 @@
     "domain": [
       "domain:nvidia.com",
       "domain:epicgames.com",
+      "domain:akamaized.net",
       "domain:betopfun.com",
       "domain:babylonjs.com",
       "domain:betopgame.com",
@@ -59,5 +60,6 @@
   }
 
 ]
+
 
 
