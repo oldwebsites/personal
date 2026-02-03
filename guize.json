@@ -42,6 +42,7 @@
     "outboundTag": "direct",
     "domain": [
       "domain:nvidia.com",
+      "domain:epicgames.com",
       "domain:betopfun.com",
       "domain:babylonjs.com",
       "domain:betopgame.com",
@@ -58,4 +59,5 @@
   }
 
 ]
+
 
