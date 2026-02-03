@@ -42,6 +42,7 @@
     "outboundTag": "direct",
     "domain": [
       "domain:nvidia.com",
+      "domain:fastly-edge.com",
       "domain:epicgames.com",
       "domain:epicgames.dev",
       "domain:epicgamescdn.com",
@@ -62,6 +63,7 @@
   }
 
 ]
+
 
 
 
