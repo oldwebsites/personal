@@ -42,6 +42,7 @@
     "outboundTag": "direct",
     "domain": [
       "domain:nvidia.com",
+      "domain:racknerd.com",
       "domain:fastly-edge.com",
       "domain:epicgames.com",
       "domain:epicgames.dev",
@@ -63,6 +64,7 @@
   }
 
 ]
+
 
 
 
