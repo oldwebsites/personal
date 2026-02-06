@@ -42,6 +42,9 @@
     "outboundTag": "direct",
     "domain": [
       "domain:nvidia.com",
+      "domain:cas-bridge.xethub.hf.co",
+      "domain:xethub.hf.co",
+      "domain:hf.com",
       "domain:racknerd.com",
       "domain:fastly-edge.com",
       "domain:epicgames.com",
@@ -64,6 +67,7 @@
   }
 
 ]
+
 
 
 
