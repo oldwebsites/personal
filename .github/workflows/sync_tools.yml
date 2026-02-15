@@ -1,83 +1,42 @@
-name: Sync Tools to Personal Repo
-
-on:
-  schedule:
-    - cron: '0 20 * * *'   # 每天北京时间凌晨 4 点
-  workflow_dispatch:      # 允许手动运行
-
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    env:
-      # 设置环境变量，方便后续脚本调用
-      R_NAME: ${{ github.repository }}
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Download v2rayN Latest
-        run: |
-          # 1. 获取最新 Release 的下载链接
-          API_URL="https://api.github.com/repos/2dust/v2rayN/releases/latest"
-          DOWNLOAD_URL=$(curl -s $API_URL | grep "browser_download_url" | grep "windows-64-desktop.zip" | cut -d '"' -f 4)
-          
-          if [ -z "$DOWNLOAD_URL" ]; then
-            echo "❌ 未找到 v2rayN 下载链接"
-            exit 1
-          fi
-          
-          # 2. 下载并保存
-          curl -L "$DOWNLOAD_URL" -o v2rayN-latest.zip
-
-      - name: Download FreeNodes
-        run: |
-          curl -L https://raw.githubusercontent.com/shuaidaoya/FreeNodes/main/nodes/base64.txt -o base64.txt
-
       - name: Generate README
         run: |
-          # 获取当前时间
-          UP_TIME=$(date +'%Y-%m-%d %H:%M')
-          
-          # 使用 echo 逐行写入，彻底避免 YAML 缩进错误
+          # 获取当前时间（北京时间建议用 UTC+8 调整，如果服务器是 UTC）
+          UP_TIME=$(date -u +'%Y-%m-%d %H:%M' -d '+8 hours')  # 强制 +8 小时 → 北京时间
+
+          # 使用 echo 逐行写入，避免任何缩进/YAML 解析问题
           echo "# Auto Sync Tools" > README.md
+          echo "" >> README.md
           echo "本仓库每天自动同步以下文件：" >> README.md
           echo "" >> README.md
-          
-          echo "## 📌 v2rayN 最新版" >> README.md
-          echo "- 下载链接：**https://ghproxy.net/https://github.com/$R_NAME/blob/main/v2rayN-latest.zip**" >> README.md
-          echo "- 更新时间：\`$UP_TIME\`" >> README.md
-          echo "" >> README.md
-          
-          echo "## 📌 FreeNodes Base64" >> README.md
-          echo "- 下载链接：**https://ghproxy.net/https://github.com/$R_NAME/blob/main/base64.txt**" >> README.md
-          echo "- 更新时间：\`$UP_TIME\`" >> README.md
-          echo "" >> README.md
-          
-          echo "---" >> README.md
-          echo "# 📘 自定义路由规则 (guize.json)" >> README.md
-          echo "| 加速类型 | 链接地址 |" >> README.md
-          echo "|---|---|" >> README.md
-          echo "| GitHub Raw | https://raw.githubusercontent.com/$R_NAME/main/guize.json |" >> README.md
-          echo "| ghproxy | https://ghproxy.net/https://raw.githubusercontent.com/$R_NAME/main/guize.json |" >> README.md
-          echo "| jsDelivr | https://cdn.jsdelivr.net/gh/$R_NAME@main/guize.json |" >> README.md
-          echo "" >> README.md
-          echo "---" >> README.md
-          echo "自动同步由 GitHub Actions 驱动。" >> README.md
 
-      - name: Commit and Push Changes
-        run: |
-          git config --global --add safe.directory /github/workspace
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          
-          # 添加文件
-          git add v2rayN-latest.zip base64.txt README.md
-          
-          # 检查是否有变化
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-          else
-            git commit -m "Update tools $(date +'%Y-%m-%d %H:%M')"
-            git push origin main
-          fi
+          echo "## 📌 v2rayN 最新版" >> README.md
+          echo "- 下载链接（推荐 ghproxy 加速）：**https://ghproxy.net/https://github.com/${R_NAME}/blob/main/v2rayN-latest.zip**" >> README.md
+          echo "- 文件名：v2rayN-latest.zip" >> README.md
+          echo "- 更新时间：\`${UP_TIME}\`" >> README.md
+          echo "" >> README.md
+
+          echo "## 📌 FreeNodes Base64 订阅" >> README.md
+          echo "- 下载链接（推荐 ghproxy 加速）：**https://ghproxy.net/https://github.com/${R_NAME}/blob/main/base64.txt**" >> README.md
+          echo "- 文件名：base64.txt" >> README.md
+          echo "- 更新时间：\`${UP_TIME}\`" >> README.md
+          echo "" >> README.md
+
+          echo "---" >> README.md
+          echo "" >> README.md
+
+          echo "## 📘 自定义路由规则 (guize.json)" >> README.md
+          echo "多种加速方式（任选其一即可）：" >> README.md
+          echo "" >> README.md
+          echo "- **GitHub Raw**（官方直链，适合科学上网环境）：" >> README.md
+          echo "  https://raw.githubusercontent.com/${R_NAME}/main/guize.json" >> README.md
+          echo "" >> README.md
+          echo "- **ghproxy 加速**（国内推荐）：" >> README.md
+          echo "  https://ghproxy.net/https://raw.githubusercontent.com/${R_NAME}/main/guize.json" >> README.md
+          echo "" >> README.md
+          echo "- **jsDelivr CDN**（速度较快，适合大部分场景）：" >> README.md
+          echo "  https://cdn.jsdelivr.net/gh/${R_NAME}@main/guize.json" >> README.md
+          echo "" >> README.md
+
+          echo "---" >> README.md
+          echo "自动同步由 GitHub Actions 每天定时驱动。" >> README.md
+          echo "如有问题欢迎 issue 反馈～" >> README.md
