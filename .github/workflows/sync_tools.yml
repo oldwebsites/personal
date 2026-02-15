@@ -2,12 +2,14 @@ name: Sync Tools to Personal Repo
 
 on:
   schedule:
-    - cron: '0 20 * * *'   # 每天北京时间凌晨 4 点
-  workflow_dispatch:      # 允许手动运行
+    - cron: '0 20 * * *'
+  workflow_dispatch:
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+    env:
+      R_NAME: ${{ github.repository }}
 
     steps:
       - name: Checkout Repository
@@ -15,16 +17,14 @@ jobs:
 
       - name: Download v2rayN Latest
         run: |
-          # 1. 获取最新 Release 的下载链接
           API_URL="https://api.github.com/repos/2dust/v2rayN/releases/latest"
           DOWNLOAD_URL=$(curl -s $API_URL | grep "browser_download_url" | grep "windows-64-desktop.zip" | cut -d '"' -f 4)
-          
+
           if [ -z "$DOWNLOAD_URL" ]; then
             echo "❌ 未找到 v2rayN 下载链接"
             exit 1
           fi
-          
-          # 2. 下载并保存
+
           curl -L "$DOWNLOAD_URL" -o v2rayN-latest.zip
 
       - name: Download FreeNodes
@@ -33,10 +33,8 @@ jobs:
 
       - name: Generate README
         run: |
-          # 直接使用 Shell 变量拼接，避免 YAML 解析冲突
           UP_TIME=$(date +'%Y-%m-%d %H:%M')
-          R_NAME="${{ github.repository }}"
-          
+
           cat > README.md <<EOF
 # Auto Sync Tools
 本仓库每天自动同步以下文件：
@@ -67,11 +65,9 @@ EOF
           git config --global --add safe.directory /github/workspace
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          
-          # 添加所有文件
+
           git add v2rayN-latest.zip base64.txt README.md
-          
-          # 检查是否有变化并推送
+
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
