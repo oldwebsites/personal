@@ -41,11 +41,11 @@ jobs:
 
 ## 📌 v2rayN 最新版
 - 下载链接：**https://ghproxy.net/https://github.com/${R_NAME}/blob/main/v2rayN-latest.zip**
-- 更新时间：\`$UP_TIME\`
+- 更新时间：`$UP_TIME`
 
 ## 📌 FreeNodes Base64
 - 下载链接：**https://ghproxy.net/https://github.com/${R_NAME}/blob/main/base64.txt**
-- 更新时间：\`$UP_TIME\`
+- 更新时间：`$UP_TIME`
 
 ---
 
