@@ -1,0 +1,74 @@
+name: Sync Tools to Personal Repo
+
+on:
+  schedule:
+    - cron: '0 20 * * *'   # 每天北京时间凌晨 4 点
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Download v2rayN Latest
+        run: |
+          API_URL="https://api.github.com/repos/2dust/v2rayN/releases/latest"
+          DOWNLOAD_URL=$(curl -s $API_URL | grep "browser_download_url" | grep "windows-64-desktop.zip" | cut -d '"' -f 4)
+
+          if [ -z "$DOWNLOAD_URL" ]; then
+            echo "❌ 未找到 v2rayN 下载链接"
+            exit 1
+          fi
+
+          curl -L "$DOWNLOAD_URL" -o v2rayN-latest.zip
+
+      - name: Download FreeNodes
+        run: |
+          curl -L https://raw.githubusercontent.com/shuaidaoya/FreeNodes/main/nodes/base64.txt -o base64.txt
+
+      - name: Generate README
+        run: |
+          UPDATE_TIME=$(date +'%Y-%m-%d %H:%M')
+
+          FILE_V2RAY="https://ghproxy.net/https://github.com/${{ github.repository }}/blob/main/v2rayN-latest.zip"
+          FILE_BASE64="https://ghproxy.net/https://github.com/${{ github.repository }}/blob/main/base64.txt"
+
+          cat > README.md <<EOF
+# Auto Sync Tools
+
+本仓库每天自动同步以下文件：
+
+## 📌 v2rayN 最新版
+- 文件：\`v2rayN-latest.zip\`
+- 下载链接（自动加速）：  
+  **${FILE_V2RAY}**
+- 更新时间：\`${UPDATE_TIME}\`
+
+## 📌 FreeNodes Base64
+- 文件：\`base64.txt\`
+- 下载链接（自动加速）：  
+  **${FILE_BASE64}**
+- 来源：shuaidaoya/FreeNodes
+- 更新时间：\`${UPDATE_TIME}\`
+
+---
+
+自动同步由 GitHub Actions 驱动。
+EOF
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+          git add v2rayN-latest.zip base64.txt README.md
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update tools $(date +'%Y-%m-%d %H:%M')"
+            git push
+          fi
