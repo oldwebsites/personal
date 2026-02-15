@@ -2,13 +2,14 @@ name: Sync Tools to Personal Repo
 
 on:
   schedule:
-    - cron: '0 20 * * *'
-  workflow_dispatch:
+    - cron: '0 20 * * *'   # 每天北京时间凌晨 4 点
+  workflow_dispatch:      # 允许手动运行
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     env:
+      # 设置环境变量，方便后续脚本调用
       R_NAME: ${{ github.repository }}
 
     steps:
@@ -17,14 +18,16 @@ jobs:
 
       - name: Download v2rayN Latest
         run: |
+          # 1. 获取最新 Release 的下载链接
           API_URL="https://api.github.com/repos/2dust/v2rayN/releases/latest"
           DOWNLOAD_URL=$(curl -s $API_URL | grep "browser_download_url" | grep "windows-64-desktop.zip" | cut -d '"' -f 4)
-
+          
           if [ -z "$DOWNLOAD_URL" ]; then
             echo "❌ 未找到 v2rayN 下载链接"
             exit 1
           fi
-
+          
+          # 2. 下载并保存
           curl -L "$DOWNLOAD_URL" -o v2rayN-latest.zip
 
       - name: Download FreeNodes
@@ -33,41 +36,45 @@ jobs:
 
       - name: Generate README
         run: |
+          # 获取当前时间
           UP_TIME=$(date +'%Y-%m-%d %H:%M')
-
-          cat > README.md <<EOF
-# Auto Sync Tools
-本仓库每天自动同步以下文件：
-
-## 📌 v2rayN 最新版
-- 下载链接：**https://ghproxy.net/https://github.com/${R_NAME}/blob/main/v2rayN-latest.zip**
-- 更新时间：`$UP_TIME`
-
-## 📌 FreeNodes Base64
-- 下载链接：**https://ghproxy.net/https://github.com/${R_NAME}/blob/main/base64.txt**
-- 更新时间：`$UP_TIME`
-
----
-
-# 📘 自定义路由规则 (guize.json)
-| 加速类型 | 链接地址 |
-|------|------|
-| GitHub Raw | https://raw.githubusercontent.com/${R_NAME}/main/guize.json |
-| ghproxy | https://ghproxy.net/https://raw.githubusercontent.com/${R_NAME}/main/guize.json |
-| jsDelivr | https://cdn.jsdelivr.net/gh/${R_NAME}@main/guize.json |
-
----
-自动同步由 GitHub Actions 驱动。
-EOF
+          
+          # 使用 echo 逐行写入，彻底避免 YAML 缩进错误
+          echo "# Auto Sync Tools" > README.md
+          echo "本仓库每天自动同步以下文件：" >> README.md
+          echo "" >> README.md
+          
+          echo "## 📌 v2rayN 最新版" >> README.md
+          echo "- 下载链接：**https://ghproxy.net/https://github.com/$R_NAME/blob/main/v2rayN-latest.zip**" >> README.md
+          echo "- 更新时间：\`$UP_TIME\`" >> README.md
+          echo "" >> README.md
+          
+          echo "## 📌 FreeNodes Base64" >> README.md
+          echo "- 下载链接：**https://ghproxy.net/https://github.com/$R_NAME/blob/main/base64.txt**" >> README.md
+          echo "- 更新时间：\`$UP_TIME\`" >> README.md
+          echo "" >> README.md
+          
+          echo "---" >> README.md
+          echo "# 📘 自定义路由规则 (guize.json)" >> README.md
+          echo "| 加速类型 | 链接地址 |" >> README.md
+          echo "|---|---|" >> README.md
+          echo "| GitHub Raw | https://raw.githubusercontent.com/$R_NAME/main/guize.json |" >> README.md
+          echo "| ghproxy | https://ghproxy.net/https://raw.githubusercontent.com/$R_NAME/main/guize.json |" >> README.md
+          echo "| jsDelivr | https://cdn.jsdelivr.net/gh/$R_NAME@main/guize.json |" >> README.md
+          echo "" >> README.md
+          echo "---" >> README.md
+          echo "自动同步由 GitHub Actions 驱动。" >> README.md
 
       - name: Commit and Push Changes
         run: |
           git config --global --add safe.directory /github/workspace
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-
+          
+          # 添加文件
           git add v2rayN-latest.zip base64.txt README.md
-
+          
+          # 检查是否有变化
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
