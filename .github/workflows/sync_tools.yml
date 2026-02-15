@@ -2,8 +2,8 @@ name: Sync Tools to Personal Repo
 
 on:
   schedule:
-    - cron: '0 20 * * *'
-  workflow_dispatch:
+    - cron: '0 20 * * *'   # 每天北京时间凌晨 4 点
+  workflow_dispatch:      # 允许手动运行
 
 jobs:
   sync:
@@ -30,15 +30,18 @@ jobs:
       - name: Generate README
         run: |
           UPDATE_TIME=$(date +'%Y-%m-%d %H:%M')
-          FILE_V2RAY="https://ghproxy.net/https://github.com/${{ github.repository }}/blob/main/v2rayN-latest.zip"
-          FILE_BASE64="https://ghproxy.net/https://github.com/${{ github.repository }}/blob/main/base64.txt"
-          GUIZE_RAW="https://raw.githubusercontent.com/${{ github.repository }}/main/guize.json"
-          GUIZE_GHPROXY="https://ghproxy.net/https://raw.githubusercontent.com/${{ github.repository }}/main/guize.json"
-          GUIZE_JSDELIVR="https://cdn.jsdelivr.net/gh/${{ github.repository }}@main/guize.json"
+          REPO_PATH="${{ github.repository }}"
+          
+          # 定义链接
+          FILE_V2RAY="https://ghproxy.net/https://github.com/${REPO_PATH}/blob/main/v2rayN-latest.zip"
+          FILE_BASE64="https://ghproxy.net/https://github.com/${REPO_PATH}/blob/main/base64.txt"
+          GUIZE_RAW="https://raw.githubusercontent.com/${REPO_PATH}/main/guize.json"
+          GUIZE_GHPROXY="https://ghproxy.net/https://raw.githubusercontent.com/${REPO_PATH}/main/guize.json"
+          GUIZE_JSDELIVR="https://cdn.jsdelivr.net/gh/${REPO_PATH}@main/guize.json"
 
           cat > README.md <<EOF
 # Auto Sync Tools
-仓库每天自动同步以下文件：
+本仓库每天自动同步以下文件：
 
 ## 📌 v2rayN 最新版
 - 下载链接：**${FILE_V2RAY}**
@@ -48,28 +51,28 @@ jobs:
 - 下载链接：**${FILE_BASE64}**
 - 更新时间：\`${UPDATE_TIME}\`
 
-## 📘 路由规则 (guize.json)
-| 类型 | 链接 |
+---
+
+# 📘 自定义路由规则 (guize.json)
+| 加速类型 | 链接地址 |
 |------|------|
 | GitHub Raw | ${GUIZE_RAW} |
 | ghproxy | ${GUIZE_GHPROXY} |
 | jsDelivr | ${GUIZE_JSDELIVR} |
+
+---
+自动同步由 GitHub Actions 驱动。
 EOF
 
       - name: Commit and Push Changes
         run: |
-          # 解决可能的 Git 权限报错
           git config --global --add safe.directory /github/workspace
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-
           git add v2rayN-latest.zip base64.txt README.md
-          
-          # 检查是否有变化并处理推送
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
             git commit -m "Update tools $(date +'%Y-%m-%d %H:%M')"
-            # 增加强制推送以解决冲突
             git push origin main
           fi
