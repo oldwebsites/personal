@@ -36,6 +36,11 @@ jobs:
           FILE_V2RAY="https://ghproxy.net/https://github.com/${{ github.repository }}/blob/main/v2rayN-latest.zip"
           FILE_BASE64="https://ghproxy.net/https://github.com/${{ github.repository }}/blob/main/base64.txt"
 
+          # 固定加入你的 guize.json 三种链接
+          GUIZE_RAW="https://raw.githubusercontent.com/${{ github.repository }}/main/guize.json"
+          GUIZE_GHPROXY="https://ghproxy.net/https://raw.githubusercontent.com/${{ github.repository }}/main/guize.json"
+          GUIZE_JSDELIVR="https://cdn.jsdelivr.net/gh/${{ github.repository }}@main/guize.json"
+
           cat > README.md <<EOF
 # Auto Sync Tools
 
@@ -53,6 +58,20 @@ jobs:
   **${FILE_BASE64}**
 - 来源：shuaidaoya/FreeNodes
 - 更新时间：\`${UPDATE_TIME}\`
+
+---
+
+# 📘 自定义 v2rayN 路由规则（guize.json）
+
+这是你自定义的路由规则文件，供本地 v2rayN 客户端云端更新使用。
+
+### 🔗 三种可用下载方式
+
+| 类型 | 链接 |
+|------|------|
+| GitHub Raw | ${GUIZE_RAW} |
+| ghproxy 加速 | ${GUIZE_GHPROXY} |
+| jsDelivr CDN | ${GUIZE_JSDELIVR} |
 
 ---
 
