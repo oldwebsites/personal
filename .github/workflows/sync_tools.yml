@@ -15,12 +15,16 @@ jobs:
 
       - name: Download v2rayN Latest
         run: |
+          # 1. 获取最新 Release 的下载链接
           API_URL="https://api.github.com/repos/2dust/v2rayN/releases/latest"
           DOWNLOAD_URL=$(curl -s $API_URL | grep "browser_download_url" | grep "windows-64-desktop.zip" | cut -d '"' -f 4)
+          
           if [ -z "$DOWNLOAD_URL" ]; then
             echo "❌ 未找到 v2rayN 下载链接"
             exit 1
           fi
+          
+          # 2. 下载并保存
           curl -L "$DOWNLOAD_URL" -o v2rayN-latest.zip
 
       - name: Download FreeNodes
@@ -29,36 +33,30 @@ jobs:
 
       - name: Generate README
         run: |
-          UPDATE_TIME=$(date +'%Y-%m-%d %H:%M')
-          REPO_PATH="${{ github.repository }}"
+          # 直接使用 Shell 变量拼接，避免 YAML 解析冲突
+          UP_TIME=$(date +'%Y-%m-%d %H:%M')
+          R_NAME="${{ github.repository }}"
           
-          # 定义链接
-          FILE_V2RAY="https://ghproxy.net/https://github.com/${REPO_PATH}/blob/main/v2rayN-latest.zip"
-          FILE_BASE64="https://ghproxy.net/https://github.com/${REPO_PATH}/blob/main/base64.txt"
-          GUIZE_RAW="https://raw.githubusercontent.com/${REPO_PATH}/main/guize.json"
-          GUIZE_GHPROXY="https://ghproxy.net/https://raw.githubusercontent.com/${REPO_PATH}/main/guize.json"
-          GUIZE_JSDELIVR="https://cdn.jsdelivr.net/gh/${REPO_PATH}@main/guize.json"
-
           cat > README.md <<EOF
 # Auto Sync Tools
 本仓库每天自动同步以下文件：
 
 ## 📌 v2rayN 最新版
-- 下载链接：**${FILE_V2RAY}**
-- 更新时间：\`${UPDATE_TIME}\`
+- 下载链接：**https://ghproxy.net/https://github.com/${R_NAME}/blob/main/v2rayN-latest.zip**
+- 更新时间：\`$UP_TIME\`
 
 ## 📌 FreeNodes Base64
-- 下载链接：**${FILE_BASE64}**
-- 更新时间：\`${UPDATE_TIME}\`
+- 下载链接：**https://ghproxy.net/https://github.com/${R_NAME}/blob/main/base64.txt**
+- 更新时间：\`$UP_TIME\`
 
 ---
 
 # 📘 自定义路由规则 (guize.json)
 | 加速类型 | 链接地址 |
 |------|------|
-| GitHub Raw | ${GUIZE_RAW} |
-| ghproxy | ${GUIZE_GHPROXY} |
-| jsDelivr | ${GUIZE_JSDELIVR} |
+| GitHub Raw | https://raw.githubusercontent.com/${R_NAME}/main/guize.json |
+| ghproxy | https://ghproxy.net/https://raw.githubusercontent.com/${R_NAME}/main/guize.json |
+| jsDelivr | https://cdn.jsdelivr.net/gh/${R_NAME}@main/guize.json |
 
 ---
 自动同步由 GitHub Actions 驱动。
@@ -69,7 +67,11 @@ EOF
           git config --global --add safe.directory /github/workspace
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
+          
+          # 添加所有文件
           git add v2rayN-latest.zip base64.txt README.md
+          
+          # 检查是否有变化并推送
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
