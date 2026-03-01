@@ -25,23 +25,14 @@ jobs:
         id: sync
         run: python sync_999.py
 
-      - name: Delete Old Release
-        # 使用 dev-drprasad/delete-tag-and-release-action 来清理旧版本
-        uses: dev-drprasad/delete-tag-and-release-action@v1.1.0
-        with:
-          tag_name: latest
-          delete_release: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true # 第一次运行没有旧版会报错，设为 true 跳过
-
-      - name: Create New Release
+      - name: Create or Update Release
         uses: softprops/action-gh-release@v1
-        if: success()
         with:
           tag_name: latest
           name: "Chrome Latest Update (${{ steps.sync.outputs.version }})"
           body: "自动更新于 ${{ steps.sync.outputs.version }}。原始地址: https://download.979862.xyz/"
           files: ${{ steps.sync.outputs.filename }}
+          overwrite: true  # 核心参数：直接覆盖同名文件
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
