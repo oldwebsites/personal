@@ -1,0 +1,47 @@
+name: Auto Update Chrome Latest
+on:
+  schedule:
+    - cron: '0 */6 * * *' # 每 6 小时检查一次
+  workflow_dispatch:      # 支持手动触发
+
+jobs:
+  update-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install requests
+
+      - name: Run Sync Script
+        id: sync
+        run: python sync_999.py
+
+      - name: Delete Old Release
+        # 使用 dev-drprasad/delete-tag-and-release-action 来清理旧版本
+        uses: dev-drprasad/delete-tag-and-release-action@v1.1.0
+        with:
+          tag_name: latest
+          delete_release: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true # 第一次运行没有旧版会报错，设为 true 跳过
+
+      - name: Create New Release
+        uses: softprops/action-gh-release@v1
+        if: success()
+        with:
+          tag_name: latest
+          name: "Chrome Latest Update (${{ steps.sync.outputs.version }})"
+          body: "自动更新于 ${{ steps.sync.outputs.version }}。原始地址: https://download.979862.xyz/"
+          files: ${{ steps.sync.outputs.filename }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
