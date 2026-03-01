@@ -1,4 +1,4 @@
-name: Auto Update Chrome Latest
+name: Auto Update 999_Chrome Latest
 on:
   schedule:
     - cron: '0 */6 * * *' # 每 6 小时检查一次
@@ -30,9 +30,8 @@ jobs:
         with:
           tag_name: latest
           name: "Chrome Latest Update (${{ steps.sync.outputs.version }})"
-          body: "自动更新于 ${{ steps.sync.outputs.version }}。原始地址: https://download.979862.xyz/"
-          files: ${{ steps.sync.outputs.filename }}
-          overwrite: true  # 核心参数：直接覆盖同名文件
-          prerelease: false
+          # 注意：这里我们通过指定同一个 tag 和使用 files，它会自动替换文件
+          files: Chrome_Latest.7z
+          # 如果文件已存在，这个插件默认会尝试更新它
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
