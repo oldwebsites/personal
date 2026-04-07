@@ -43,6 +43,7 @@
     "outboundTag": "direct",
     "domain": [
       "domain:nvidia.com",
+      "domain:paradoxplaza.com",
       "domain:canyouseeme.org",
       "domain:alcyone.so",
       "domain:cas-bridge.xethub.hf.co",
