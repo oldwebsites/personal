@@ -43,6 +43,7 @@
     "outboundTag": "direct",
     "domain": [
       "domain:nvidia.com",
+      "domain:lionaitech.com",
       "domain:paradoxplaza.com",
       "domain:canyouseeme.org",
       "domain:alcyone.so",
