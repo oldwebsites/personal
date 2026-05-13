@@ -43,6 +43,8 @@
     "outboundTag": "direct",
     "domain": [
       "domain:nvidia.com",
+      "domain:ghfast.top",
+      "domain:cdn.jsdelivr.net",
       "domain:lionaitech.com",
       "domain:paradoxplaza.com",
       "domain:canyouseeme.org",
