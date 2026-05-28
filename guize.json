@@ -23,6 +23,8 @@
     "outboundTag": "proxy",
     "domain": [
       "domain:googleapis.com",
+      "domain:gemini.google.com",
+      "domain:google.com",
       "domain:freedom.gov",
       "domain:gstatic.com",
       "domain:googleusercontent.com",
