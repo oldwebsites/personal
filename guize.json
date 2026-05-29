@@ -45,6 +45,7 @@
     "outboundTag": "direct",
     "domain": [
       "domain:ghfast.top",
+      "domain:cloudflare.com",
       "domain:cdn.jsdelivr.net",
       "domain:lionaitech.com",
       "domain:paradoxplaza.com",
