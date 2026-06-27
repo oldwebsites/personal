@@ -45,7 +45,6 @@
     "outboundTag": "direct",
     "domain": [
       "domain:ghfast.top",
-      "domain:release-assets.githubusercontent.com",
       "domain:cloudflare.com",
       "domain:cdn.jsdelivr.net",
       "domain:lionaitech.com",
